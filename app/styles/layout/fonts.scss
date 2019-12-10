@@ -1,0 +1,23 @@
+//@import url('https://fonts.googleapis.com/css?family=Courier+New:400');
+
+@font-face {
+    font-family: 'Ubuntu';
+    src: url('../../fonts/ubuntu-v14-cyrillic_latin-300.woff2') format('woff2'), url('../../fonts/ubuntu-v14-cyrillic_latin-300.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ubuntu';
+    src: url('../../fonts/ubuntu-v14-cyrillic_latin-700.woff2') format('woff2'), url('../../fonts/ubuntu-v14-cyrillic_latin-700.woff') format('woff');
+    font-weight: $bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ubuntu';
+    src: url('../../fonts/ubuntu-v14-cyrillic_latin-regular.woff2') format('woff2'), url('../../fonts/ubuntu-v14-cyrillic_latin-regular.woff') format('woff');
+    font-weight: $regular;
+    font-style: normal;
+}
+
