@@ -6,17 +6,32 @@ html(lang="ru")
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         meta(http-equiv="X-UA-Compatible", content="ie=edge")
-        title Макет 1 | Безместин Игорь
+        title ВП № 1
         link(rel="stylesheet", href="main.min.css")
     body
-        .wrapper
-
-            //- +header
-
-            main.maincontent   
-
-                h1 Hello         
-
-            //- +footer('1')
+        #map
+        .popup
+            .popup__container
+                .popup__header
+                    .popup__icon
+                    .popup__address Невский пр., 78, Санкт-Петербург
+                    a.popup__close(href="#")
+                        .popup__line
+                        .popup__line
+                .popup__main
+                    .popup__reviews
+                        ul.popup__reviews
+                            li.popup__item
+                                .popup__name svetlana
+                                .popup__address--review Шоколадница 13.12.2015
+                                .popup__review
+                    .popup__form
+                        form.form(name="formreview")
+                            .form__content
+                                label.form__label ВАШ ОТЗЫВ
+                                input.form__input(type="text" name="reviewName" placeholder="Ваше имя")
+                                input.form__input(type="text" name="reviewplace" placeholder="Укажите место")
+                                textarea.form__textarea(name="reviewImpressions" placeholder="Поделитесь впечатлениями")
+                                button.form__button(type="button") Добавить
         
-        script(src="main.min.js")
+        script(src="https://api-maps.yandex.ru/2.1/?apikey=8066e43a-c6e4-462b-aa8e-77c5f4b44a9d&lang=ru_RU" type="text/javascript")
