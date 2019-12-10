@@ -1,0 +1,8 @@
+html, body {
+    height: 100%;
+    //overflow: hidden;
+}
+
+#map {
+    //min-height: 100%;
+}
