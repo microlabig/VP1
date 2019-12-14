@@ -1,0 +1,140 @@
+#popup {
+    position: absolute;
+    top: 0;
+
+    width: 380px;
+    background-color: $white-color;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 5px 3px 4px 2px $border-color;
+    
+    opacity: 1;
+    transition: opacity .4s;
+
+    &.close {
+        opacity: 0;
+    }
+}
+
+// Header
+.popup__header {    
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 13px 16px;
+    background-color: $active-color;
+    color: $white-color;
+
+    margin-bottom: 12px;
+}
+
+.popup__adresscontainer {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.popup__icon {
+    margin-right: 5px;
+}
+
+.popup__address {
+    width: 90%;
+    font-weight: $light;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.popup__close {
+    flex: 1;
+    right: 13px;
+    top: -3px;
+    position: relative;
+
+    &:before, &:after {
+        content:'';
+        position: absolute;    
+
+        width: 18px;
+        height: 4px;
+        border-radius: 4px;
+        background-color: $white-color;
+    }
+    
+    &:before {
+        transform: rotate(45deg);// translate(-50%, -50%);
+    }
+    &:after {
+        transform: rotate(-45deg);// translate(-50%, -50%);
+    }
+
+    &:hover:before, &:hover:after{
+        background-color: $hover-color;
+        transition: background-color .4s;
+    }
+}
+
+// REVIEWS
+.popup__main {
+    padding: 0 16px;
+    padding-bottom: 15px;
+}
+
+.popup__reviews {
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 24px;
+    margin-bottom: 12px;
+}
+
+.popup__list-reviews {
+    overflow: auto;
+    max-height: 137px;
+}
+
+.popup__item {
+    margin-bottom: 21px;
+    
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.popup__info {
+    margin-bottom: 5px;
+}
+
+.popup__name, .popup__address--review, .popup__date {
+    display: inline-block;
+    font-size: 16px;
+    font-weight: $regular;
+    margin-right: 5px;
+    
+    &:last-child {
+        margin-right: 0;
+    }
+}
+.popup__address--review, .popup__date {
+    color: $placeholder-color;
+}
+
+.popup__address--review {
+    margin-right: 0;
+}
+
+.popup__name {
+    font-weight: $medium;
+    margin-right: 7px;
+}
+
+.popup__date {
+    margin-right: 0;
+}
+
+.popup__review {
+    font-size: 15px;
+    font-weight: $regular;
+}

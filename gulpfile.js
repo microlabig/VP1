@@ -52,7 +52,7 @@ task('styles', () => {
         .pipe(sass({ outputStyle: 'expand' }).on("error", notify.onError() ))
         .pipe(px2rem({
             dpr: 1,             // base device pixel ratio (default: 2)
-            rem: 15,            // root element (html) font-size (default: 16)
+            rem: 16,            // root element (html) font-size (default: 16)
             one: false          // whether convert 1px to rem (default: false)
         })) 
         .pipe(gulpif(env === 'dev', autoprefixer({ cascade: false })))
@@ -113,7 +113,7 @@ task("copy:favicon", () => {
 
 // таск копирования шрифтов
 task("copy:fonts", () => {
-    return src(`${SRC_PATH}/fonts/*.*`)
+    return src(`${SRC_PATH}/fonts/**/*.*`)
         .pipe(dest(`${DIST_PATH}/fonts`))
         .pipe(reload({ stream: true })); //перезагрузим браузер (задача выполняется внутри потока (stream:true))
 });
@@ -149,6 +149,7 @@ task('default',
 // таск build
 task('build', 
     series('clean', 
-            parallel('pug', 'styles', 'scripts', /* 'icons', */ 'copy:img', 'copy:fonts', 'copy:favicon')
+        parallel('copy:img', 'copy:fonts', 'copy:favicon'), 
+        parallel('pug', 'styles', 'scripts', /* 'icons', */ )
     )
 );

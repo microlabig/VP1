@@ -1,5 +1,3 @@
-console.log(1);
-
 ymaps.ready(init);
 
 let myMap;
@@ -16,4 +14,27 @@ function init() {
         controls: ['zoomControl'], // оставить только zoom-панель и yandex-copyright
         behaviors: ['drag'] // зададим поведение: drag - позволяет перемещать карту при нажатии ЛКМ
     });
+
+    myMap.events.add('click', function (e) {
+        if (!myMap.balloon.isOpen()) {
+            let coords = e.get('coords');
+            myMap.balloon.open(coords, {
+                contentHeader:'Событие!',
+                contentBody:'<p>Кто-то щелкнул по карте.</p>' +
+                    '<p>Координаты щелчка: ' + [
+                    coords[0].toPrecision(6),
+                    coords[1].toPrecision(6)
+                    ].join(', ') + '</p>',
+                contentFooter:'<sup>Щелкните еще раз</sup>'
+            });
+        }
+        else {
+            myMap.balloon.close();
+        }
+    });
 }
+
+/* myMap.addEventLister('click', e => {
+    console.log(e);
+    
+}); */
