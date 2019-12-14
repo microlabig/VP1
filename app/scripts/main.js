@@ -1,7 +1,10 @@
-ymaps.ready(init);
+let myMap, // Яндекс-карта
+    listReviews = []; // Массив отзывов с точками на карте
 
-let myMap;
+// Инициализируем Яндекс-карту
+ymaps.ready(init); 
 
+// Функция инициализации Яндекс-карты
 function init() {
     // Создание экземпляра карты и его привязка к контейнеру с
     // заданным id ("map").
@@ -15,26 +18,60 @@ function init() {
         behaviors: ['drag'] // зададим поведение: drag - позволяет перемещать карту при нажатии ЛКМ
     });
 
-    myMap.events.add('click', function (e) {
-        if (!myMap.balloon.isOpen()) {
-            let coords = e.get('coords');
-            myMap.balloon.open(coords, {
-                contentHeader:'Событие!',
-                contentBody:'<p>Кто-то щелкнул по карте.</p>' +
-                    '<p>Координаты щелчка: ' + [
-                    coords[0].toPrecision(6),
-                    coords[1].toPrecision(6)
-                    ].join(', ') + '</p>',
-                contentFooter:'<sup>Щелкните еще раз</sup>'
-            });
-        }
-        else {
-            myMap.balloon.close();
-        }
+    myMap.events.add('click', e => {
+        //FIXME:if (!myMap.balloon.isOpen()) {
+
+            const coords = e.get('coords');
+            /* 
+            listReviews = [
+                {
+                    coordinates: [
+                        coords[0].toPrecision(6), coords[1].toPrecision(6)
+                    ],
+                    reviews: [
+                        {
+                            name: 'Сергей Мелюков',
+                            place: 'Шоколадница',
+                            date: '13.12.2015',
+                            text: 'Ужасное место! Кругом зомби!!!',
+                        }
+                    ]
+                }
+            ]; */
     });
 }
 
-/* myMap.addEventLister('click', e => {
-    console.log(e);
-    
-}); */
+document.addEventListener('click', e => {
+    const target = e.target;
+
+    //if (target)
+    if (target.tagName === 'YMAPS') {    
+        const WIDTH = 380, HEIGHT = 435; // габариты попапа
+        let [x, y] = [e.clientX, e.clientY];
+
+        const isEmptyListReviews = listReviews.length > 0 ? true : false;
+
+        // Сгенерируем сожержимое попапа в зависимости от listReviews и его длины
+        const popupTemplate = document.querySelector('#popup-template').textContent;
+        const render = Handlebars.compile(popupTemplate);
+        const html = render({isEmptyListReviews, listReviews});
+        
+        const popup = document.querySelector('.popup');
+
+        if ((x + WIDTH) > document.body.clientWidth) {
+            x -= WIDTH;
+        }
+        
+        if ((y + HEIGHT) > document.body.clientHeight) {
+            y -= HEIGHT;
+        }
+        
+
+        popup.style = `
+            top: ${y}px;
+            left: ${x}px;
+        `;
+
+        popup.innerHTML = html;
+    }
+});

@@ -1,4 +1,4 @@
-#popup {
+.popup {
     position: absolute;
     top: 0;
 
@@ -107,7 +107,7 @@
     margin-bottom: 5px;
 }
 
-.popup__name, .popup__address--review, .popup__date {
+.popup__name, .popup__place, .popup__date {
     display: inline-block;
     font-size: 16px;
     font-weight: $regular;
@@ -117,11 +117,11 @@
         margin-right: 0;
     }
 }
-.popup__address--review, .popup__date {
+.popup__place, .popup__date {
     color: $placeholder-color;
 }
 
-.popup__address--review {
+.popup__place {
     margin-right: 0;
 }
 

@@ -16,10 +16,10 @@ const   rm = require('gulp-rm'),    // удаление файлов
         uglify = require('gulp-uglify'), // минификация js
         notify = require("gulp-notify"), // уведомления 
         wait = require('gulp-wait2'), // задержка
-        svgo = require('gulp-svgo'), // оптимизация svg
-        svgSprite = require('gulp-svg-sprite'), // объединения всех svg в один
-        gulpif = require('gulp-if'), // плагин условия
-        pug = require('gulp-pug'); // шаблонизатор pug
+        // svgo = require('gulp-svgo'), // оптимизация svg
+        // svgSprite = require('gulp-svg-sprite'), // объединения всех svg в один
+        gulpif = require('gulp-if'); // плагин условия
+        // pug = require('gulp-pug'); // шаблонизатор pug
 
 const env = process.env.NODE_ENV; // env - переменная из переменных окружения node.js, определяется в package.json
 
@@ -34,12 +34,12 @@ task('clean', () => {
     return src(`${DIST_PATH}/**/*`, { read: false }).pipe(rm());
 });
 
-task('pug', () => {
+/* task('pug', () => {
     return src(`${SRC_PATH}/pages/index.pug`)
         .pipe(pug({pretty: true}))
         .pipe(dest(`${DIST_PATH}`))
         .pipe(reload({stream: true}));
-});
+}); */
 
 // таск стилей
 task('styles', () => {
@@ -118,6 +118,13 @@ task("copy:fonts", () => {
         .pipe(reload({ stream: true })); //перезагрузим браузер (задача выполняется внутри потока (stream:true))
 });
 
+// таск копирования шрифтов
+task("copy:html", () => {
+    return src(`${SRC_PATH}/pages/**/*.*`)
+        .pipe(dest(`${DIST_PATH}`))
+        .pipe(reload({ stream: true })); //перезагрузим браузер (задача выполняется внутри потока (stream:true))
+});
+
 // таск дев-сервера
 task('server', () => {
     browserSync.init({
@@ -131,7 +138,8 @@ task('server', () => {
 
 // вотчеры
 task('watch', ()=> {
-    watch(`./${SRC_PATH}/pages/**/*.pug`, series('pug'));
+    //watch(`./${SRC_PATH}/pages/**/*.pug`, series('pug'));
+    watch(`./${SRC_PATH}/pages/**/*.html`, series('copy:html'));
     watch(`./${SRC_PATH}/styles/**/*.scss`, series('styles'));
     watch(`./${SRC_PATH}/scripts/**/*.js`, series('scripts'));
     //watch(`./${SRC_PATH}/images/icons/**/*.svg`, series('icons'));
@@ -140,8 +148,8 @@ task('watch', ()=> {
 // таск по умолчанию
 task('default', 
     series('clean', 
-            parallel('copy:img', 'copy:fonts', 'copy:favicon'), 
-            parallel('pug', 'styles', 'scripts', /* 'icons', */ ), 
+            parallel('copy:img', 'copy:fonts', 'copy:favicon', 'copy:html'), 
+            parallel('styles', 'scripts', /* 'icons', */ ), 
             parallel('watch', 'server')
     )
 );
@@ -149,7 +157,7 @@ task('default',
 // таск build
 task('build', 
     series('clean', 
-        parallel('copy:img', 'copy:fonts', 'copy:favicon'), 
-        parallel('pug', 'styles', 'scripts', /* 'icons', */ )
+        parallel('copy:img', 'copy:fonts', 'copy:favicon', 'copy:html'), 
+        parallel('styles', 'scripts', /* 'icons', */ )
     )
 );
