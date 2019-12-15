@@ -19,8 +19,14 @@
 
     padding: 9px 12px;
 
+    transition: border-color .4s;
+
     &::placeholder {
         color: $placeholder-color;
+    }
+
+    &.fail {
+        border-color: $fail-color;
     }
 }
 

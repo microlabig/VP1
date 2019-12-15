@@ -7,13 +7,6 @@
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 5px 3px 4px 2px $border-color;
-    
-    opacity: 1;
-    transition: opacity .4s;
-
-    &.close {
-        opacity: 0;
-    }
 }
 
 // Header
@@ -42,18 +35,23 @@
 
 .popup__address {
     width: 90%;
+
     font-weight: $light;
     font-size: 12px;
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .popup__close {
-    flex: 1;
-    right: 13px;
-    top: -3px;
     position: relative;
+    /* flex: 1;
+    right: 13px;
+    top: -3px; */
+    min-width: 16px;
+    height: 16px;
+    top: 5px;
 
     &:before, &:after {
         content:'';
@@ -88,6 +86,10 @@
     border-bottom: 1px solid $border-color;
     padding-bottom: 24px;
     margin-bottom: 12px;
+}
+
+.popup__text {
+    min-height: 137px;
 }
 
 .popup__list-reviews {
