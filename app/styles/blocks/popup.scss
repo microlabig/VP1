@@ -1,12 +1,14 @@
 .popup {
     position: absolute;
     top: 0;
+    left: 0;
 
     width: 380px;
     background-color: $white-color;
+    //border: 1px solid rgba($placeholder-color, .3);
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 5px 3px 4px 2px $border-color;
+    //box-shadow: 5px 3px 4px 2px $border-color;
 }
 
 // Header
@@ -94,7 +96,7 @@
 
 .popup__list-reviews {
     overflow: auto;
-    max-height: 137px;
+    height: 137px;
 }
 
 .popup__item {

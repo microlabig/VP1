@@ -23,20 +23,18 @@
             <div class="popup__main">
                 <div class="popup__reviews">
                     {{#if isFound}}
-                        {{#each listReviews}}
-                            <ul class="popup__list-reviews">
-                                {{#each reviews}}
-                                    <li class="popup__item">
-                                        <div class="popup__info">
-                                            <div class="popup__name">{{name}}</div>
-                                            <div class="popup__place">{{place}}</div>
-                                            <div class="popup__date">{{date}}</div>
-                                        </div>
-                                        <div class="popup__review">{{text}}</div>
-                                    </li>
-                                {{/each}}
-                            </ul>
-                        {{/each}}
+                        <ul class="popup__list-reviews">
+                            {{#each items}}
+                                <li class="popup__item">
+                                    <div class="popup__info">
+                                        <div class="popup__name">{{name}}</div>
+                                        <div class="popup__place">{{place}}</div>
+                                        <div class="popup__date">{{date}}</div>
+                                    </div>
+                                    <div class="popup__review">{{text}}</div>
+                                </li>
+                            {{/each}}
+                        </ul>
                     {{else}}
                         <div class="popup__text">Отзывов пока нет...</div>
                     {{/if}}
