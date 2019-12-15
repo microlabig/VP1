@@ -28,7 +28,7 @@
 .popup__adresscontainer {
     display: flex;
     flex-wrap: nowrap;
-    width: 100%;
+    width: 95%;
 }
 
 .popup__icon {
@@ -48,12 +48,10 @@
 
 .popup__close {
     position: relative;
-    /* flex: 1;
-    right: 13px;
-    top: -3px; */
     min-width: 16px;
     height: 16px;
     top: 5px;
+    z-index: 10;
 
     &:before, &:after {
         content:'';
@@ -72,9 +70,11 @@
         transform: rotate(-45deg);// translate(-50%, -50%);
     }
 
-    &:hover:before, &:hover:after{
-        background-color: $hover-color;
-        transition: background-color .4s;
+    &:hover{
+        &:before, &:after {
+            background-color: $hover-color;
+            transition: background-color .4s;
+        }
     }
 }
 

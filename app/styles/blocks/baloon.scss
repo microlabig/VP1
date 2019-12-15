@@ -1,0 +1,17 @@
+.ballon_header, .ballon_body, .ballon_footer {
+    font-size: 14px;
+}
+
+.ballon_header {
+    font-weight: $regular;
+}
+
+.ballon_body {
+    margin-bottom: 14px;
+}
+
+.ballon_footer {
+    text-align: right; 
+    color: $baloon-footer-color; 
+    margin-top: 90px;
+}
