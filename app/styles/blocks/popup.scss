@@ -85,18 +85,23 @@
 }
 
 .popup__reviews {
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;    
+
+    height: 137px;
+
+    overflow: auto;
+
     padding-bottom: 24px;
     margin-bottom: 12px;
 }
 
 .popup__text {
-    min-height: 137px;
+    //min-height: 137px;
 }
 
 .popup__list-reviews {
-    overflow: auto;
-    height: 137px;
+    width: 100%;
+    word-wrap: break-word;
 }
 
 .popup__item {
