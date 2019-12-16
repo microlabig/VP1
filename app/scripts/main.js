@@ -61,9 +61,6 @@ new Promise(resolve => ymaps.ready(resolve) // Инициализируем Ян
                     });
                 });
         });
-
-        // Масштабируем карту на область видимости коллекции.
-        //TODO:myMap.setBounds(res.geoObjects.getBounds());
     })
 );
 
@@ -328,8 +325,7 @@ function renderMarks(array, map) {
                             event.originalEvent.domEvent.originalEvent.clientY
                         ]
                     );
-                })
-                
+                });
             });
     });
 
@@ -338,12 +334,14 @@ function renderMarks(array, map) {
     // добавим кластер на карту
     map.geoObjects.add(clusterer);
 
-    // TODO:
+    // обработчик открытия балуна на кластере
     clusterer.events.add('balloonopen', event => {
-        
-        //console.log(event, event.getObject(), event.get('target'));
-        const ev = event;
+        //console.log(event.get('target').getData()); // данные текущего кластера
+        //console.log(event.get('target').getData().geometry.getCoordinates()); // координаты текущего кластера
 
+        console.log(event.get('target').getData().cluster.getGeoObjects()); // текущие гео-объекты в кластере
+        
+        // TODO: по гео-объектам найти все объекты из listReviews и отбразить их в попапе
         const link = document.querySelector('.balloon__link');
 
         link.addEventListener('click', event => {
@@ -360,7 +358,17 @@ function renderMarks(array, map) {
         
         
     });  
+
+    /* 
+    // маштабирование карты для вмещения в нее всех меток
+    myMap.setBounds(clusterer.getBounds(), {
+        checkZoomRange: true,
+        zoomMargin: 15
+    }); 
+    */
 }
+
+
 
 // ----------------------------------------------------------------------------------------------
 // Функция обратного геокодирования (координаты -> адрес)
