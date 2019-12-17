@@ -157,8 +157,7 @@ function generateTemplate() {
     };
     const address = glob.address;
 
-    // проверим, есть в основном массиве текущие координаты
-    //debugger;
+    // проверим, есть в основном массиве текущие координаты    
     for (const item of listReviews) {
         if (item.coordinates[0] === glob.coordinates[0] && item.coordinates[1] === glob.coordinates[1]) {
             isFound = true;
@@ -339,24 +338,25 @@ function renderMarks(array, map) {
         //console.log(event.get('target').getData()); // данные текущего кластера
         //console.log(event.get('target').getData().geometry.getCoordinates()); // координаты текущего кластера
 
-        console.log(event.get('target').getData().cluster.getGeoObjects()); // текущие гео-объекты в кластере
+        let geoBojectsInCluster = event.get('target').getData().cluster.getGeoObjects(); // текущие гео-объекты в кластере
+        glob.coordinates = geoBojectsInCluster[0].geometry.getCoordinates(); // взять текущие координаты одного из гео-объектов кластера
         
-        // TODO: по гео-объектам найти все объекты из listReviews и отбразить их в попапе
-        const link = document.querySelector('.balloon__link');
+        // найдем адрес и выведем в попап при клике на ссылку <a></a>
+        geocodeBack(glob.coordinates).then((str) => {
+            const link = document.querySelector('.balloon__link');
 
-        link.addEventListener('click', event => {
-            clusterer.balloon.close();
-            event.preventDefault();
-
-            renderPopup(
-                [
-                    event.clientX,
-                    event.clientY
-                ]
-            );
-        })
-        
-        
+            link.addEventListener('click', event => {
+                clusterer.balloon.close(); // закроем балун
+                event.preventDefault();
+                glob.address = str;
+                renderPopup(
+                    [
+                        event.clientX,
+                        event.clientY
+                    ]
+                );
+            })
+        });
     });  
 
     /* 
