@@ -20,6 +20,7 @@ const   rm = require('gulp-rm'),    // удаление файлов
         // svgSprite = require('gulp-svg-sprite'), // объединения всех svg в один
         gulpif = require('gulp-if'); // плагин условия
         // pug = require('gulp-pug'); // шаблонизатор pug
+        const eslint = require('gulp-eslint');
 
 const env = process.env.NODE_ENV; // env - переменная из переменных окружения node.js, определяется в package.json
 
@@ -74,6 +75,13 @@ task('scripts', () => {
     .pipe(dest(`${DIST_PATH}`))
     .pipe(reload({stream: true}));
 });
+
+task('eslint', () => {
+    return src([...JS_LIBS,`${SRC_PATH}/scripts/**/*.js`])
+        .pipe(eslint())
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError())
+})
 
 // таск иконок
 /* task('icons', () => {
@@ -136,6 +144,7 @@ task('server', () => {
 });
 
 
+
 // вотчеры
 task('watch', ()=> {
     //watch(`./${SRC_PATH}/pages/**/*.pug`, series('pug'));
@@ -145,7 +154,7 @@ task('watch', ()=> {
     //watch(`./${SRC_PATH}/images/icons/**/*.svg`, series('icons'));
 })
 
-// таск по умолчанию
+// таск по умолчанию (gulp)
 task('default', 
     series('clean', 
             parallel('copy:img', 'copy:fonts', 'copy:favicon', 'copy:html'), 
@@ -161,3 +170,10 @@ task('build',
         parallel('styles', 'scripts', /* 'icons', */ )
     )
 );
+
+// таск checkJS
+task('codestyle', 
+    series('eslint')
+);
+
+

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "codestyle": "cross-env NODE_ENV=codestyle gulp codestyle",
     "gulp": "cross-env NODE_ENV=dev gulp",
     "build": "cross-env NODE_ENV=build gulp build"
   },
@@ -45,6 +45,7 @@
     "node-sass": "^4.12.0"
   },
   "dependencies": {
+    "gulp-eslint": "^6.0.0",
     "normalize.css": "^8.0.1"
   }
 }

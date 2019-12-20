@@ -1,19 +1,24 @@
-let myMap, // Яндекс-карта
-    listReviews = [], // Массив отзывов с точками на карте
-    geoObjects = [], // массив с placeMarks
-    glob = {
-        address: "",
-        coordinates: [], // глобальные текущие координаты на карте
-        review: "",
-        name: "",
-        place: "",
-        date: ""
-    }
+let myMap; // Яндекс-карта
+let listReviews = []; // Массив отзывов с точками на карте
+let geoObjects = []; // массив с placeMarks
+let glob = {
+    address: '',
+    coordinates: [], // глобальные текущие координаты на карте
+    review: '',
+    name: '',
+    place: '',
+    date: ''
+};
+let isClickedOnBalloon = false; // определение клика на балуне
+let currentBalloon = null; // текущий балун (используется для передачи в глобальный обработчик кликов)
 
+// ------------------------------------------------------------------
+// Используем промис для инициализации ymaps
+// ------------------------------------------------------------------
 new Promise(resolve => ymaps.ready(resolve) // Инициализируем Яндекс-карту
     .then(() => {
         // Создание экземпляра карты и его привязка к контейнеру с
-        // заданным id ("map").
+        // заданным id ('map').
         myMap = new ymaps.Map('map', {
             // При инициализации карты обязательно нужно указать
             // её центр и коэффициент масштабирования.
@@ -26,6 +31,7 @@ new Promise(resolve => ymaps.ready(resolve) // Инициализируем Ян
 
         // загрузим данные из localStorage в глобальный массив отзывов
         listReviews = getFromLocalStorage();
+
         // если он не пустой - отрендерить метки
         if (listReviews.length > 0) {
             renderMarks(listReviews, myMap);
@@ -37,7 +43,7 @@ new Promise(resolve => ymaps.ready(resolve) // Инициализируем Ян
             const coordinates = event.get('coords'); // текущие координаты курсора на окне [x, y]
 
             // запишем в текущий объект координаты клика
-            glob.coordinates = [coordinates[0], coordinates[1]];            
+            glob.coordinates = [coordinates[0], coordinates[1]];
 
             // выполним обратное геокодирование (для взятия адреса по координатам)
             geocodeBack(coordinates)
@@ -48,9 +54,9 @@ new Promise(resolve => ymaps.ready(resolve) // Инициализируем Ян
                     // отрендерим попап
                     renderPopup(position);
 
-                    // ----------------------------------------------------------------------------------------------
+                    // ------------------------------------------------------------------
                     // Обработчик скрытия попапа по отпусканию клавиши <ESC>
-                    // ----------------------------------------------------------------------------------------------
+                    // ------------------------------------------------------------------
                     document.addEventListener('keyup', event => {
                         const popup = document.querySelector('.popup__container');
 
@@ -64,12 +70,22 @@ new Promise(resolve => ymaps.ready(resolve) // Инициализируем Ян
     })
 );
 
+// -------------------------------------------------------------------------
+// Обработчик кликов (делегирование по клику на ссылке с адресом в балуне)
+// -------------------------------------------------------------------------
+document.addEventListener('click', event => {
+    if (event.target.classList.contains('balloon__link') && isClickedOnBalloon) {
+        renderPopupFromBalloon(event, currentBalloon);
+        isClickedOnBalloon = false;
+    }
+});
+
 // ----------------------------------------------------------------------------------------------
 // Функция загрузки данных из localStorage
 // ----------------------------------------------------------------------------------------------
 function getFromLocalStorage() {
     let arr = JSON.parse(localStorage.getItem('listReviews'));
-    
+
     if (!arr) { // если получили не массив
         return []; // вернуть пустой массив
     }
@@ -87,15 +103,12 @@ function saveToLocalStorage(arr) {
 // ----------------------------------------------------------------------------------------------
 // функция рендера попапа
 // ----------------------------------------------------------------------------------------------
-function renderPopup(position, str) {
-    const WIDTH = 380, HEIGHT = 555; // габариты попапа
-
-    let [x, y] = position; // координаты Х и У клика
-
+function renderPopup(position) {
+    const WIDTH = 380; // ширина попапа
+    const HEIGHT = 555; // высота попапа
     const html = generateTemplate(); // генерируем шаблон попапа 
-
-    // ищем элемент, в который будем ложить попап
-    const popup = document.querySelector('.popup');
+    const popup = document.querySelector('.popup'); // ищем элемент, в который будем ложить попап
+    let [x, y] = position; // координаты Х и У клика
 
     // позиционируем попап полностью относительно координат клика в окне
     if ((x + WIDTH) > document.body.clientWidth) {
@@ -104,12 +117,14 @@ function renderPopup(position, str) {
             x = 0;
         }
     }
+
     if ((y + HEIGHT) > document.body.clientHeight) {
         y -= HEIGHT;
         if (y < 0) {
             y = 0;
         }
     }
+
     popup.style = `
         top: ${y}px;
         left: ${x}px;
@@ -123,13 +138,14 @@ function renderPopup(position, str) {
 }
 
 // ----------------------------------------------------------------------------------------------
-// Функция рендеринга попапа с добавлением обработчика на кнопку "Добавить"
+// Функция рендеринга попапа с добавлением обработчика на кнопку 'Добавить'
 // ----------------------------------------------------------------------------------------------
 function renderCurrentReviewsInPopup(popup) {
     const html = generateTemplate(); // генерируем шаблон попапа 
+
     popup.innerHTML = html;
 
-    // найдем кнопку "Добавить" отзыв в попапе
+    // найдем кнопку 'Добавить' отзыв в попапе
     const popupButton = popup.querySelector('.form__button');
 
     // и навешиваем обработчик кликов для добавления информации в основной массив
@@ -137,10 +153,10 @@ function renderCurrentReviewsInPopup(popup) {
         clickHandlerPopupButton(popup);
     });
 
-    // найдем кнопку "закрытия" попапа
+    // найдем кнопку 'закрытия' попапа
     const popupCloseButton = popup.querySelector('.popup__close');
 
-    // и навешиваем обработчик "закрытия" попапа
+    // и навешиваем обработчик 'закрытия' попапа
     popupCloseButton.addEventListener('click', event => {
         event.preventDefault();
         popup.innerHTML = '';
@@ -151,11 +167,11 @@ function renderCurrentReviewsInPopup(popup) {
 // Функция генерации шаблона попапа по координатам
 // ----------------------------------------------------------------------------------------------
 function generateTemplate() {
-    let isFound = false; // признак наличия в основном массиве отзывов (по координатам)
     const currentReviews = { // объект с массивом отзывов по текущим координатам
         items: []
     };
     const address = glob.address;
+    let isFound = false; // признак наличия в основном массиве отзывов (по координатам)
 
     // проверим, есть в основном массиве текущие координаты    
     for (const item of listReviews) {
@@ -168,12 +184,12 @@ function generateTemplate() {
     // Сгенерируем содержимое попапа в зависимости от listReviews и его длины
     const popupTemplate = document.querySelector('#popup-template').textContent;
     const render = Handlebars.compile(popupTemplate);
-    
+
     return render({ address, isFound, ...currentReviews });
 }
 
 // ----------------------------------------------------------------------------------------------
-// Обработчик кликов на кнопке "Добавить"
+// Обработчик кликов на кнопке 'Добавить'
 // ----------------------------------------------------------------------------------------------
 function clickHandlerPopupButton(popup) {
     // найдем форму для отзывов
@@ -194,8 +210,6 @@ function clickHandlerPopupButton(popup) {
         renderCurrentReviewsInPopup(popup);
 
         saveToLocalStorage(listReviews);
-    } else {
-        return;
     }
 }
 
@@ -211,7 +225,7 @@ function addInformation({ reviewName, reviewPlace, reviewImpressions }) {
         review: reviewImpressions.value,
     };
 
-    listReviews.push({...glob});
+    listReviews.push({ ...glob });
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -220,13 +234,13 @@ function addInformation({ reviewName, reviewPlace, reviewImpressions }) {
 function renderMarks(array, map) {
     // Создаем собственный макет с информацией о выбранном геообъекте.
     let customItemContentLayout = ymaps.templateLayoutFactory.createClass(
-        // Флаг "raw" означает, что данные вставляют "как есть" без экранирования html.
+        // Флаг 'raw' означает, что данные вставляют 'как есть' без экранирования html.
         `
-        <div class="balloon">
-            <h2 class="balloon__header">{{ properties.balloonContentHeader|raw }}</h2>
-            <a href="#" class="balloon__link">{{ properties.balloonContentBody|raw }}</a>
-            <div class="balloon__review">{{ properties.myBaloonReview|raw }}</div>
-            <div class="balloon__footer">{{ properties.balloonContentFooter|raw }}</div>
+        <div class='balloon'>
+            <h2 class='balloon__header'>{{ properties.balloonContentHeader|raw }}</h2>
+            <a href='#' class='balloon__link'>{{ properties.balloonContentBody|raw }}</a>
+            <div class='balloon__review'>{{ properties.myBaloonReview|raw }}</div>
+            <div class='balloon__footer'>{{ properties.balloonContentFooter|raw }}</div>
         </div>
         `
     );
@@ -242,7 +256,7 @@ function renderMarks(array, map) {
             ],
             clusterDisableClickZoom: true,
             clusterOpenBalloonOnClick: true,
-            // Устанавливаем стандартный макет балуна кластера "Карусель".
+            // Устанавливаем стандартный макет балуна кластера 'Карусель'.
             clusterBalloonContentLayout: 'cluster#balloonCarousel',
             // Устанавливаем собственный макет.
             clusterBalloonItemContentLayout: customItemContentLayout,
@@ -256,13 +270,18 @@ function renderMarks(array, map) {
             clusterBalloonPagerSize: 5,
             // cделаем макет содержимого иконки кластера, в котором цифры будут раскрашены по стилю класса .cluster__text
             clusterIconContentLayout: ymaps.templateLayoutFactory.createClass(
-                '<div class="cluster__text">{{ properties.geoObjects.length }}</div>'
+                `
+                <div class='cluster__text'>
+                    {{ properties.geoObjects.length }}
+                </div>
+                `
             )
         }
     );
 
-    if (geoObjects.length > 0)
+    if (geoObjects.length > 0) {
         map.geoObjects.removeAll(); // сотрем все метки на карте
+    }
     geoObjects = []; // обнулим массив меток на карте
 
     // переведем все объекты изз глобального массива в метки
@@ -270,7 +289,7 @@ function renderMarks(array, map) {
         geoObjects.push(new ymaps.Placemark(
             [
                 array[i].coordinates[0], // latitude
-                array[i].coordinates[1]  // longitude
+                array[i].coordinates[1] // longitude
             ],
             {
                 // Устаналиваем данные, которые будут отображаться в балуне.
@@ -301,7 +320,7 @@ function renderMarks(array, map) {
                     iconImageClipRect: [[74, 10], [118, 76]]
                 }
             );
-            //map.hint.open(geoObject.geometry.getCoordinates(), geoObject.getPremise());
+            // map.hint.open(geoObject.geometry.getCoordinates(), geoObject.getPremise());
         })
             .add('mouseleave', event => {
                 event.get('target').options.set(
@@ -335,30 +354,24 @@ function renderMarks(array, map) {
 
     // обработчик открытия балуна на кластере
     clusterer.events.add('balloonopen', event => {
-        //console.log(event.get('target').getData()); // данные текущего кластера
-        //console.log(event.get('target').getData().geometry.getCoordinates()); // координаты текущего кластера
+        // console.log(event.get('target').getData()); // данные текущего кластера
+        // console.log(event.get('target').getData().geometry.getCoordinates()); // координаты текущего кластера
 
+        let balloon = clusterer.balloon; // найдем текущий открытый балун
         let geoBojectsInCluster = event.get('target').getData().cluster.getGeoObjects(); // текущие гео-объекты в кластере
+
         glob.coordinates = geoBojectsInCluster[0].geometry.getCoordinates(); // взять текущие координаты одного из гео-объектов кластера
-        
+
         // найдем адрес и выведем в попап при клике на ссылку <a></a>
         geocodeBack(glob.coordinates).then((str) => {
-            const link = document.querySelector('.balloon__link');
+            glob.address = str;
 
-            link.addEventListener('click', event => {
-                clusterer.balloon.close(); // закроем балун
-                event.preventDefault();
-                glob.address = str;
-                renderPopup(
-                    [
-                        event.clientX,
-                        event.clientY
-                    ]
-                );
-            })
-        });
-    });  
-
+            balloon.events.add('click', () => {
+                isClickedOnBalloon = true;
+                currentBalloon = balloon;
+            });
+        })
+    });
     /* 
     // маштабирование карты для вмещения в нее всех меток
     myMap.setBounds(clusterer.getBounds(), {
@@ -368,7 +381,15 @@ function renderMarks(array, map) {
     */
 }
 
+// ----------------------------------------------------------------------------------------------
+// Функция отрисовки попапа по координатам балуна
+// ----------------------------------------------------------------------------------------------
+function renderPopupFromBalloon(event, balloon) {
+    balloon.close(); // закроем балун
 
+    // renderPopup([ event.get('position')[0], event.get('position')[1] ]);
+    renderPopup([event.clientX, event.clientY]);
+}
 
 // ----------------------------------------------------------------------------------------------
 // Функция обратного геокодирования (координаты -> адрес)
@@ -407,6 +428,7 @@ function validateInputs(inputArray) {
             isEmpty = true;
         }
     }
+
     return isEmpty;
 }
 
@@ -423,12 +445,12 @@ function getCurrentDateTime() {
         seconds = currDate.getSeconds();
 
     // сформируем двузначные значения
-    month = (month < 10) ? ("0" + month) : ("" + month);
-    day = (day < 10) ? ("0" + day) : ("" + day);
-    hours = (hours < 10) ? ("0" + hours) : ("" + hours);
-    minutes = (minutes < 10) ? ("0" + minutes) : ("" + minutes);
-    seconds = (seconds < 10) ? ("0" + seconds) : ("" + seconds);
+    month = (month < 10) ? ('0' + month) : ('' + month);
+    day = (day < 10) ? ('0' + day) : ('' + day);
+    hours = (hours < 10) ? ('0' + hours) : ('' + hours);
+    minutes = (minutes < 10) ? ('0' + minutes) : ('' + minutes);
+    seconds = (seconds < 10) ? ('0' + seconds) : ('' + seconds);
 
-    // сформируем текущую дату в формат по макету
+    // сформируем текущую дату в нужный формат по макету
     return `${currDate.getFullYear()}.${month}.${day} ${hours}:${minutes}:${seconds}`;
 }
