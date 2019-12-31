@@ -80,9 +80,9 @@ task('scripts', () => {
                 ]
             }
         )))
-        .pipe(browserify({
+        /* .pipe(browserify({
             insertGlobals: true
-        }))
+        })) */
         .pipe(gulpif(env === 'build', uglify()))
         .pipe(gulpif(env === 'dev', sourcemaps.write()))
         .pipe(dest(`${DIST_PATH}`))
